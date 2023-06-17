@@ -2,49 +2,47 @@ import java.text.NumberFormat;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        NumberFormat currency = NumberFormat.getCurrencyInstance();
-        int p;
-        float annR;
-        int years;
+
+        int principal = (int) readNumber("Principal",1000,1_000_000);
+        float annualInterest = (float) readNumber("Annual Interest Rate",1,30);
+        byte years = (byte) readNumber("Period(Years)",1,30);
 
 
-        while (true) {
-            System.out.print("Principal($1K - $1M): ");
-            p = scanner.nextInt();
-            if (p>=1000 && p<=1000000)
-                break;
-            System.out.println("Enter a number between 1,000 and 1,000,000.");
-            }
+        double mortgage = calculateMortgage(principal, annualInterest, years);
 
-
-        while (true) {
-            System.out.print("Annual Interest Rate: ");
-            annR = scanner.nextFloat();
-            if (annR>0 && annR<=30)
-                break;
-            System.out.println("Enter a value greater than 0 and less than or equal to 30.");
-
-        }
-         while(true) {
-            System.out.print("Period (Years): ");
-            years = scanner.nextInt();
-            if (years>0 && years<=30)
-                break;
-            System.out.println("Enter a value between 1 and 30");
-        }
-
-        // Now we need to get the monthly interest rate
-        float r = annR/1200;
-        //Now we need to get the total number of payments
-        int n = years*12;
-
-        // The formula for Mortgage is M=(P*r*(1+r)^n)/(((1+r)^n) - 1)
-
-        double M = (p*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
-        M = (double) Math.round(M*100)/100;
-
-        System.out.print("Mortgage: " + currency.format(M));
-        }
+        String mortgageFormatted = NumberFormat.getCurrencyInstance().format(mortgage);
+        System.out.println("Mortgage: " + mortgageFormatted);
     }
+    public static double readNumber(String prompt,double min, double max){
+        Scanner scanner = new Scanner(System.in);
+        double value;
+        while (true) {
+            System.out.print(prompt + ": ");
+            value = scanner.nextDouble();
+            if (value >= min && value <= max)
+                break;
+            System.out.println("Enter a value between "+ min + " and " + max);
+        }
+        return value;
+    }
+    public static double calculateMortgage(
+            int principal,
+            float annualInterest,
+            byte years
+    ){
+        final byte MONTHS_IN_YEAR = 12;
+        final byte PERCENT = 100;
+
+        float monthlyInterest = annualInterest / PERCENT / MONTHS_IN_YEAR;
+        short numberOfPayments = (short)(years * MONTHS_IN_YEAR);
+
+        double mortgage = principal
+                * (monthlyInterest * Math.pow(1 + monthlyInterest, numberOfPayments))
+                / (Math.pow(1 + monthlyInterest, numberOfPayments) - 1);
+        return mortgage;
+    }
+
+}
+
