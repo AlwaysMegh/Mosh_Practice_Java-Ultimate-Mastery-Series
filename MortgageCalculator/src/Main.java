@@ -11,7 +11,6 @@ public class Main {
         float annualInterest = (float) readNumber("Annual Interest Rate",1,30);
         byte years = (byte) readNumber("Period(Years)",1,30);
 
-
         double mortgage = calculateMortgage(principal, annualInterest, years);
         printMortgage(mortgage);
 
